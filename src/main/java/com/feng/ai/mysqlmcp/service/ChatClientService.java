@@ -10,20 +10,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class ChatClientService {
     private final ChatClient chatClient;
-    private final String prompt = """
-           查询名字叫若依的用户信息
-           """;
 
     public ChatClientService(ChatClient.Builder builder, SyncMcpToolCallbackProvider mcpToolProvider) {
         this.chatClient = builder
                 .defaultAdvisors(new SimpleLoggerAdvisor())
-                .defaultSystem(prompt)
-                .defaultToolCallbacks(mcpToolProvider).build();
+                .defaultToolCallbacks(mcpToolProvider)
+                .build();
     }
 
     public String generateAsString(String message) {
-        String content = this.chatClient.prompt()
-                .user(promptUserSpec -> promptUserSpec.text(message))
+        String content = this.chatClient.prompt(message)
                 .call().content();
         log.info("大模型回答：{}", content);
         return content;
